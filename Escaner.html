@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner LATIN CLUB</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        /* --- ESTÉTICA GENERAL --- */
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #000000; /* Fondo negro puro */
+            color: #39ff14; /* Texto Verde Neón */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 1.5rem;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        /* --- CÁMARA --- */
+        #lector-camara {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            /* Borde neón para que se vea tecnológico */
+            border: 2px solid #39ff14;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+            background: #111;
+        }
+
+        /* --- TARJETA DE RESULTADO (Pop-up) --- */
+        #resultado-validacion {
+            margin-top: 25px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #111; /* Tarjeta oscura */
+            border: 1px solid #333;
+            display: none; /* Oculto hasta escanear */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        /* Animación para que suba suavemente */
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Títulos pequeños (Nombre, ID) */
+        .etiqueta {
+            display: block;
+            font-size: 0.8rem;
+            color: #888; /* Gris para no distraer */
+            text-transform: uppercase;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* El dato importante (Juan Perez) */
+        .dato-valor {
+            font-size: 1.8rem; /* Letra GRANDE */
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        /* Estado de éxito */
+        .exito-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* --- BOTÓN REINICIAR --- */
+        #btn-reiniciar {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            /* Gradiente Verde */
+            background: linear-gradient(90deg, #39ff14 0%, #2dbd0f 100%);
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(57, 255, 20, 0.3);
+        }
+        #btn-reiniciar:active { transform: scale(0.98); }
+
+    </style>
+</head>
+<body>
+
+    <h1>Scanner Acceso</h1>
+
+    <div id="lector-camara"></div>
+
+    <div id="resultado-validacion">
+        <span class="exito-icon">✅</span>
+        
+        <span class="etiqueta">Asistente</span>
+        <div class="dato-valor" id="res-nombre">...</div>
+
+        <span class="etiqueta">ID / Carnet</span>
+        <div class="dato-valor" id="res-id" style="color: #39ff14;">...</div>
+
+        <button id="btn-reiniciar" onclick="reiniciar()">Escanear Siguiente</button>
+    </div>
+
+    <script>
+        const html5QrCode = new Html5Qrcode("lector-camara");
+
+        // Configuración para que sea rápido
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        const onScanSuccess = (decodedText, decodedResult) => {
+            // 1. Pausar cámara al encontrar código
+            html5QrCode.pause();
+            
+            // 2. Ocultar video, mostrar tarjeta
+            document.getElementById('lector-camara').style.display = "none";
+            document.getElementById('resultado-validacion').style.display = "block";
+            
+            // 3. Procesar datos
+            try {
+                const datos = JSON.parse(decodedText);
+                document.getElementById('res-nombre').innerText = datos.nombre || "Sin Nombre";
+                document.getElementById('res-id').innerText = datos.id || "---";
+            } catch (e) {
+                // Si lee un QR que no es del sistema
+                document.getElementById('res-nombre').innerText = "QR INVÁLIDO";
+                document.getElementById('res-id').innerText = "Formato Incorrecto";
+                document.getElementById('res-nombre').style.color = "red";
+            }
+        };
+
+        function reiniciar() {
+            // Ocultar tarjeta, mostrar cámara y reanudar
+            document.getElementById('resultado-validacion').style.display = "none";
+            document.getElementById('lector-camara').style.display = "block";
+            document.getElementById('res-nombre').style.color = "#fff"; // Reset color
+            html5QrCode.resume();
+        }
+
+        // Iniciar cámara trasera
+        html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+        .catch(err => {
+            document.body.innerHTML = "<h3 style='text-align:center; margin-top:50px;'>⚠️ Error: No se detecta cámara o falta HTTPS.</h3>";
+        });
+    </script>
+</body>
+</html>
