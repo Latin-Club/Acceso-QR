@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Registro y QR</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .tarjeta {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 350px;
+        }
+        h2 { color: #333; margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box; /* Para que el padding no deforme el ancho */
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #218838; }
+        
+        /* Contenedor donde aparecerá el QR */
+        #contenedor-qr {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Texto pequeño debajo del QR */
+        .nota { font-size: 12px; color: #666; margin-top: 10px; display: none; }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+    <div class="tarjeta">
+        <h2>Registro de Usuario</h2>
+        <p>Ingresa tus datos para generar tu pase.</p>
+        
+        <input type="text" id="nombre" placeholder="Nombre Completo" required>
+        <input type="text" id="carnet" placeholder="ID / Carnet / DPI" required>
+        
+        <button onclick="generarQR()">Generar Código QR</button>
+
+        <div id="contenedor-qr"></div>
+        <p id="mensaje-exito" class="nota">¡Código generado! Escanéalo para ver los datos.</p>
+    </div>
+
+    <script>
+        function generarQR() {
+            // 1. Obtener los valores de los inputs
+            var nombre = document.getElementById('nombre').value;
+            var carnet = document.getElementById('carnet').value;
+            var contenedor = document.getElementById('contenedor-qr');
+            var mensaje = document.getElementById('mensaje-exito');
+
+            // 2. Validar que no estén vacíos
+            if (nombre === "" || carnet === "") {
+                alert("Por favor, llena todos los campos.");
+                return;
+            }
+
+            // 3. Limpiar el código QR anterior (si existe)
+            contenedor.innerHTML = "";
+
+            // 4. Crear el texto que irá DENTRO del QR.
+            // TRUCO PRO: En lugar de solo texto, usamos formato JSON.
+            // Esto simula una "base de datos" portátil.
+            var datosUsuario = {
+                id: carnet,
+                nombre: nombre,
+                fecha_registro: new Date().toLocaleString()
+            };
+            
+            // Convertimos el objeto JSON a texto plano para el QR
+            var textoParaQR = JSON.stringify(datosUsuario); 
+
+            // 5. Generar el QR usando la librería
+            new QRCode(contenedor, {
+                text: textoParaQR,
+                width: 180,
+                height: 180,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // Mostrar mensaje de éxito
+            mensaje.style.display = "block";
+        }
+    </script>
+
+</body>
+</html>

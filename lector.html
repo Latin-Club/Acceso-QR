@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector de Accesos QR</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 20px; }
+
+        /* El cuadro donde se ve la cámara */
+        #lector-camara {
+            width: 100%;
+            max-width: 500px;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* El cuadro de resultados */
+        #resultado-validacion {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #fff;
+            color: #333;
+            display: none; /* Oculto al principio */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .exito { border-left: 8px solid #27ae60; }
+        .error { border-left: 8px solid #c0392b; }
+
+        .dato-fila { margin-bottom: 10px; font-size: 1.1rem; }
+        .etiqueta { font-weight: bold; color: #7f8c8d; }
+        
+        #btn-reiniciar {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+
+    <h1>Validador de Accesos</h1>
+
+    <div id="lector-camara"></div>
+
+    <div id="resultado-validacion">
+        <h3>✅ Datos Leídos:</h3>
+        <div id="datos-contenido"></div>
+    </div>
+
+    <button id="btn-reiniciar" onclick="location.reload()">Escanear Otro</button>
+
+
+    <script>
+        // Configuración del escáner
+        const config = {
+            fps: 10, // Fotogramas por segundo (más alto = más rápido pero gasta más batería)
+            qrbox: { width: 250, height: 250 } // El tamaño del cuadrado de enfoque en pantalla
+        };
+
+        // Iniciamos la librería apuntando al div 'lector-camara'
+        const html5QrCode = new Html5Qrcode("lector-camara");
+
+        // Esta función se ejecuta cuando el lector encuentra un QR válido
+        const onScanSuccess = (decodedText, decodedResult) => {
+            // 1. Detener la cámara para que no siga escaneando el mismo código 20 veces
+            html5QrCode.stop().then(() => {
+                // Limpiar el área de la cámara
+                document.getElementById('lector-camara').style.display = "none";
+                mostrarDatos(decodedText);
+            }).catch((err) => {
+                console.error("Error al detener la cámara", err);
+            });
+        };
+
+        // Esta función maneja la data leída
+        function mostrarDatos(textoLeido) {
+            const resultadoDiv = document.getElementById('resultado-validacion');
+            const contenidoDiv = document.getElementById('datos-contenido');
+            const btnReiniciar = document.getElementById('btn-reiniciar');
+            
+            try {
+                // EL PASO MÁS IMPORTANTE:
+                // El QR nos da texto plano. Intentamos convertirlo de nuevo a objeto JSON.
+                const datosJSON = JSON.parse(textoLeido);
+
+                // Si funcionó, extraemos los datos de forma ordenada
+                contenidoDiv.innerHTML = `
+                    <div class="dato-fila">
+                        <span class="etiqueta">Nombre:</span> ${datosJSON.nombre}
+                    </div>
+                    <div class="dato-fila">
+                        <span class="etiqueta">ID/Carnet:</span> <strong>${datosJSON.id}</strong>
+                    </div>
+                    <div class="dato-fila">
+                        <span class="etiqueta">Fecha Registro:</span><br> <small>${datosJSON.fecha_registro}</small>
+                    </div>
+                `;
+                resultadoDiv.className = "exito"; // Pone el borde verde
+
+            } catch (error) {
+                // Si el QR no tiene formato JSON (es un QR cualquiera de internet)
+                contenidoDiv.innerHTML = `<p style="color:red">Error: El formato del QR no es válido para este sistema.</p><p>Contenido crudo: ${textoLeido}</p>`;
+                resultadoDiv.className = "error"; // Pone el borde rojo
+            }
+
+            // Mostrar el cuadro de resultados y el botón de reiniciar
+            resultadoDiv.style.display = "block";
+            btnReiniciar.style.display = "block";
+        }
+
+        // Iniciar el escaneo usando la cámara trasera del celular ("environment")
+        // Si estás en laptop, usará la webcam automáticamente.
+        html5QrCode.start(
+            { facingMode: "environment" }, 
+            config, 
+            onScanSuccess 
+            // No ponemos función de error para no llenar la consola mientras busca
+        ).catch(err => {
+            // Si no hay permisos de cámara o no es HTTPS
+            document.getElementById('lector-camara').innerHTML = `<p style="color:red; padding:20px;">No se pudo acceder a la cámara. Asegúrate de dar permisos y estar en HTTPS o localhost.</p>`;
+        });
+
+    </script>
+</body>
+</html>
