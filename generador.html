@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generar Pase QR</title>
+    <title>ZAIN CLUB | Generar Pase</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -13,11 +13,33 @@
             background-color: #000000; /* Fondo Negro */
             color: #ff3838; /* Color de texto principal Rojo vibrante */
             display: flex;
+            flex-direction: column; /* Importante para apilar el logo sobre la tarjeta */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px; /* Un poco de espacio en móviles */
+        }
+
+        /* --- NUEVO: Estilos para el LOGO ZAIN CLUB --- */
+        .header-logo {
+            margin-bottom: 30px; /* Espacio entre el logo y la tarjeta */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-img {
+            /* Ajusta el tamaño aquí si es necesario */
+            max-width: 90%; 
+            height: auto;
+            display: block;
+            
+            /* TRUCO CSS: Esto hace que el fondo oscuro de tu imagen se vuelva transparente */
+            mix-blend-mode: screen; 
+            
+            /* Efecto de resplandor dorado para que destaque */
+            filter: drop-shadow(0 0 15px rgba(238, 232, 170, 0.5));
         }
 
         /* --- Tarjeta Central --- */
@@ -26,10 +48,12 @@
             padding: 2.5rem;
             border-radius: 15px;
             border: 2px solid #ff3838; /* Borde Rojo */
-            box-shadow: 0 0 25px rgba(255, 56, 56, 0.3); /* Resplandor Rojo */
+            box-shadow: 0 0 35px rgba(255, 56, 56, 0.25); /* Resplandor Rojo intenso */
             text-align: center;
             width: 100%;
             max-width: 380px; /* Un poco más ancha */
+            position: relative; /* Necesario si queremos poner efectos sobre ella */
+            z-index: 10; /* Asegura que la tarjeta esté por encima si hubiera superposición */
         }
 
         /* ---Tipografía --- */
@@ -39,11 +63,13 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 700;
+            font-size: 1.8rem;
         }
         p {
             color: #ff3838;
             opacity: 0.8;
             margin-bottom: 30px;
+            font-size: 1.1rem;
         }
 
         /* --- Inputs (Campos de texto) --- */
@@ -68,7 +94,7 @@
         input:focus {
             outline: none;
             border-color: #ff3838; /* Borde rojo brillante */
-            box-shadow: 0 0 10px rgba(255, 56, 56, 0.2);
+            box-shadow: 0 0 15px rgba(255, 56, 56, 0.3);
         }
         
         /* --- Botón Principal --- */
@@ -76,8 +102,8 @@
             width: 100%;
             padding: 15px;
             margin-top: 25px;
-            /* Gradiente Rojo */
-            background: linear-gradient(135deg, #ff3838 0%, #c0392b 100%);
+            /* Gradiente Rojo agresivo */
+            background: linear-gradient(135deg, #ff3838 0%, #960000 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -85,17 +111,18 @@
             font-size: 18px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 2px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         button:hover {
             transform: translateY(-3px); /* Se levanta un poco */
-            box-shadow: 0 10px 20px rgba(255, 56, 56, 0.4); /* Sombra roja */
+            box-shadow: 0 10px 25px rgba(255, 56, 56, 0.5); /* Sombra roja intensa */
         }
         button:active { transform: translateY(-1px); }
         /* Estilo cuando está cargando */
         button:disabled {
-            background: #555;
-            color: #888;
+            background: #333;
+            color: #666;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -108,10 +135,11 @@
             justify-content: center;
             align-items: center;
             /* Un marco para que el QR resalte */
-            padding: 15px;
-            border-radius: 10px;
-            background: #0d0d0d;
-            border: 1px solid #ff3838;
+            padding: 20px;
+            border-radius: 12px;
+            background: #000000;
+            border: 2px solid #ff3838;
+            box-shadow: inset 0 0 20px rgba(255, 56, 56, 0.2); /* Resplandor interno */
             min-height: 180px; /* Evita saltos bruscos */
         }
         /* Para que la imagen del QR se adapte */
@@ -119,18 +147,24 @@
         
         /* --- Mensaje de Éxito --- */
         .nota {
-            font-size: 16px;
+            font-size: 18px;
             color: #ff3838;
-            margin-top: 20px;
+            margin-top: 25px;
             display: none;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 56, 56, 0.5);
         }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+
+    <header class="header-logo">
+        <img src="image_4.png" alt="ZAIN CLUB" class="logo-img">
+    </header>
 
     <div class="tarjeta">
         <h2>Acceso Requerido</h2>
@@ -142,11 +176,11 @@
         <button onclick="generarQR()">>>> Generar Acceso <<<</button>
 
         <div id="contenedor-qr"></div>
-        <p id="mensaje-exito" class="nota">✅ ¡Pase Generado con Éxito!</p>
+        <p id="mensaje-exito" class="nota">✅ ¡Pase Generado!</p>
     </div>
 
     <script>
-        // TU URL DE GOOGLE SHEETS (Ya estaba en tu código)
+        // TU URL DE GOOGLE SHEETS
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzwfux4r-dhwJTyKQq13KpffqUrIih5PCBeK7ywMnlNYQAv1Y6GQwSXT-ngjokad8kS0w/exec';
 
         function generarQR() {
@@ -179,15 +213,13 @@
                         validado: "si"
                     };
                     
-                    // AQUÍ ESTÁ LA MAGIA DEL COLOR DEL QR
+                    // QR ROJO SOBRE FONDO NEGRO
                     new QRCode(contenedor, {
                         text: JSON.stringify(datosUsuario),
                         width: 180,
                         height: 180,
-                        // colorDark: El color de los puntitos y cuadros (ROJO)
                         colorDark : "#ff3838", 
-                        // colorLight: El color del fondo del QR (NEGRO OSCURO)
-                        colorLight : "#0d0d0d",
+                        colorLight : "#000000",
                         correctLevel : QRCode.CorrectLevel.H
                     });
 
