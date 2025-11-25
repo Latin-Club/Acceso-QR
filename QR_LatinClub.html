@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAIN CLUB | Registro</title>
+    <title>LATIN CLUB | Registro</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* --- Estilos Generales --- */
         body {
             font-family: 'Rajdhani', sans-serif;
-            /* Aquí cargamos tu NUEVA IMAGEN DE FONDO */
             background-image: url('fondo.png');
-            background-size: cover;       /* Cubre toda la pantalla */
-            background-position: center;  /* Centrada */
+            background-size: cover;
+            background-position: center top; /* Alineado arriba para ver el arte */
             background-repeat: no-repeat;
-            background-attachment: fixed; /* El fondo se queda quieto al hacer scroll */
-            background-color: #000;       /* Color de respaldo */
+            background-attachment: fixed;
+            background-color: #000;
             
-            color: #39ff14; /* Color base: VERDE NEÓN (sacado de tu imagen) */
+            color: #39ff14;
             
             display: flex;
             flex-direction: column;
@@ -26,45 +25,52 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 15px; /* Menos padding en celular */
         }
 
-        /* --- LOGO SUPERIOR (ZAIN CLUB) --- */
+        /* --- LOGO SUPERIOR CORREGIDO --- */
         .header-logo {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             width: 100%;
             display: flex;
             justify-content: center;
-            z-index: 20; /* Asegura que esté encima de todo */
+            z-index: 20;
         }
 
         .logo-img {
-            max-width: 90%; 
+            max-width: 95%; 
             height: auto;
             display: block;
-            /* El truco para quitar el fondo negro del logo de texto */
+            
+            /* --- CORRECCIÓN DEL CUADRO GRIS --- */
+            /* 1. Contrast alto: Fuerza el gris oscuro a convertirse en NEGRO PURO */
+            /* 2. Brightness bajo: Oscurece el fondo para que desaparezca */
+            filter: contrast(150%) brightness(80%) drop-shadow(0 0 5px rgba(57, 255, 20, 0.4));
+            
+            /* Ahora sí, el modo pantalla borrará el negro perfecto */
             mix-blend-mode: screen; 
-            /* Resplandor verde para combinar con el nuevo tema */
-            filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.6));
+            
+            /* Por si acaso, redondeamos bordes para que no se vea cuadrado */
+            border-radius: 20px;
         }
 
-        /* --- Tarjeta Central (Efecto Vidrio Oscuro) --- */
+        /* --- Tarjeta Central (Más Transparente / Efecto Cristal) --- */
         .tarjeta {
-            /* Fondo negro semitransparente para ver la ilustración detrás */
-            background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(5px); /* Desenfoca un poco el fondo detrás de la tarjeta */
+            /* Mucho más transparente (0.6 en vez de 0.85) */
+            background: rgba(0, 0, 0, 0.60); 
             
-            padding: 2.5rem;
-            border-radius: 20px;
+            /* Más desenfoque para que el texto se lea bien sobre el dibujo */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); /* Para iPhone/Safari */
             
-            /* Borde degradado de Verde a Morado */
-            border: 2px solid transparent;
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
-                              linear-gradient(to bottom right, #39ff14, #9d00ff);
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
+            padding: 2rem; /* Un poco menos de relleno */
+            border-radius: 25px;
             
-            box-shadow: 0 0 40px rgba(157, 0, 255, 0.3); /* Resplandor Morado sutil */
+            /* Borde más sutil */
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            
+            /* Sombra suave */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             
             text-align: center;
             width: 100%;
@@ -74,40 +80,42 @@
 
         /* --- Tipografía --- */
         h2 {
-            color: #ffffff;
+            color: #fff;
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 1.8rem;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Sombra al texto para leerlo mejor */
         }
         p {
-            color: #cbb2fe; /* Un tono lila suave para el subtítulo */
+            color: #ddd; /* Blanco hueso para mejor lectura */
             font-size: 1rem;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
         /* --- Inputs --- */
         input {
             width: 100%;
             padding: 15px;
-            margin: 10px 0;
-            background-color: rgba(255, 255, 255, 0.05); /* Muy transparente */
-            border: 1px solid #555;
-            border-radius: 8px;
+            margin: 8px 0;
+            /* Fondo casi invisible */
+            background-color: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 12px;
             box-sizing: border-box;
-            color: #39ff14; /* Texto verde al escribir */
+            color: #39ff14;
             font-size: 16px;
             font-family: inherit;
             transition: 0.3s;
         }
-        input::placeholder { color: #666; }
+        input::placeholder { color: #aaa; }
         
         input:focus {
             outline: none;
-            border-color: #9d00ff; /* Borde morado al seleccionar */
-            box-shadow: 0 0 15px rgba(157, 0, 255, 0.4);
-            background-color: rgba(0, 0, 0, 0.5);
+            border-color: #39ff14;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
         }
         
         /* --- Botón Principal --- */
@@ -115,28 +123,20 @@
             width: 100%;
             padding: 15px;
             margin-top: 20px;
-            /* Gradiente de Verde a Morado (como las letras de la imagen) */
-            background: linear-gradient(90deg, #39ff14 0%, #9d00ff 100%);
-            color: #000; /* Texto negro para contraste con el verde neón */
+            background: linear-gradient(90deg, #39ff14 0%, #2dbd0f 100%); /* Verde puro */
+            color: #000;
             border: none;
-            border-radius: 50px; /* Botón redondeado estilo moderno */
+            border-radius: 50px;
             cursor: pointer;
             font-size: 18px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(57, 255, 20, 0.4);
+            transition: transform 0.2s;
         }
-        button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 25px rgba(57, 255, 20, 0.6); /* Brillo verde intenso */
-        }
-        button:disabled {
-            background: #333;
-            color: #777;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        button:hover { transform: scale(1.02); }
+        button:disabled { background: #333; color: #777; box-shadow: none; }
         
         /* --- Área del QR --- */
         #contenedor-qr {
@@ -146,14 +146,12 @@
             align-items: center;
             padding: 15px;
             border-radius: 15px;
-            background: #000; /* Fondo negro puro para el QR */
-            border: 1px solid #39ff14; /* Borde verde fino */
-            box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.2);
+            background: rgba(0, 0, 0, 0.8); /* Fondo oscuro para que el QR resalte */
+            border: 1px solid #39ff14;
             min-height: 180px;
         }
         #contenedor-qr img { display: block; max-width: 100%; }
         
-        /* --- Mensaje de Éxito --- */
         .nota {
             font-size: 1.1rem;
             color: #39ff14;
@@ -161,7 +159,6 @@
             display: none;
             font-weight: 700;
             text-transform: uppercase;
-            text-shadow: 0 0 8px rgba(57, 255, 20, 0.8);
         }
     </style>
 
